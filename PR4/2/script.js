@@ -19,7 +19,7 @@ function getMyLocation() {
 }
 
 function watchLocation() {
-    watchId = navigator.geolocation.watchPosition(displayLocation, displayError)
+    watchId = navigator.geolocation.watchPosition(displayLocation, displayError, null)
 }
 function clearWatch() {
     if (watchId) {
