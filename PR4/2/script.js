@@ -8,7 +8,7 @@ let watchId = null
 
 function getMyLocation() {
     if (navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(displayLocation, displayError, null)
+        navigator.geolocation.getCurrentPosition(displayLocation, displayError)
         var watchButton = document.getElementById('watch')
         watchButton.onclick = watchLocation
         var clearWatchButton = document.getElementById('clearWatch')
@@ -19,7 +19,7 @@ function getMyLocation() {
 }
 
 function watchLocation() {
-    watchId = navigator.geolocation.watchPosition(displayLocation, displayError, null)
+    watchId = navigator.geolocation.watchPosition(displayLocation, displayError)
 }
 function clearWatch() {
     if (watchId) {
