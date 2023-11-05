@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', getMyLocation)
+let map = L.map('map')
 
 let ourCoords = {
     latitude: 48.94310473226559, 
@@ -6,7 +6,45 @@ let ourCoords = {
 }
 let watchId = null
 
+let textlatlng = document.getElementById('textlatlng')
+let findButton = document.getElementById('findButton')
+let SetDestinationButton = document.getElementById('SetDestinationButton')
+
+document.addEventListener('DOMContentLoaded', getMyLocation)
+map.setView([49.267, 31.42], 5)
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map)
+
+findButton.addEventListener('click', function() {flyToPosition(false)})
+SetDestinationButton.addEventListener('click', function() {flyToPosition(true)})
+
+function flyToPosition(addPoint) {
+    let inputText = textlatlng.value.trim()
+    if (inputText !== '') {
+        let parts = inputText.split(',')
+
+        if (parts.length == 2) {
+            let latitude = parts[0].trim()
+            let longitude = parts[1].trim()
+            if (longitude != ''){
+                if (addPoint){
+                    L.marker([latitude, longitude]).addTo(map).bindPopup(`Position of the point: ${latitude}, ${longitude}`)
+                }
+                map.flyTo([latitude, longitude])
+            }
+            else{
+                alert('Ви ввели тільки одну частину координат')
+            }
+        } else {
+            alert('Неправильний формат введених даних. Будь ласка, введіть координати у форматі "latitude, longitude".')
+        }}}
+
 function getMyLocation() {
+    map.on('click', onMapClick)
+
     if (navigator.geolocation){
         navigator.geolocation.getCurrentPosition(displayLocation, displayError)
         var watchButton = document.getElementById('watch')
@@ -16,6 +54,13 @@ function getMyLocation() {
     } else{
         alert('Oops, no geolocaton support')
     }
+}
+
+function onMapClick(e) {
+    L.popup()
+        .setLatLng(e.latlng)
+        .setContent(`${e.latlng.lat.toFixed(7)}, ${e.latlng.lng.toFixed(7)}`)
+        .openOn(map)
 }
 
 function watchLocation() {
@@ -37,6 +82,27 @@ function displayLocation(position) {
     let km = computeDistance(position.coords, ourCoords)
     let distance = document.getElementById('distance')
     distance.innerHTML = `Your are ${km} km from the College`
+
+    map.setView([latitude, longitude], 16)
+    L.marker([latitude, longitude]).addTo(map).bindPopup(`Your position: ${latitude}, ${longitude}`)
+    timeUpdated()
+}
+
+function addZero(number) {
+    if (number < 10) {
+        return "0" + number
+    } else {
+        return number
+    }
+}
+
+function timeUpdated() {
+    let time = new Date()
+    let hours = addZero(time.getHours())
+    let minutes = addZero(time.getMinutes())
+    let seconds = addZero(time.getSeconds())
+    let TimeInput = document.getElementById('timeUpdate')
+    TimeInput.innerHTML = `The last update of the position was: ${hours}:${minutes}:${seconds}`
 }
 
 function displayError(error) {
