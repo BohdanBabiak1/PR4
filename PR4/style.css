@@ -1,0 +1,10 @@
+#map{
+    margin-top: 5px;
+    height: 90vh;
+}
+input[type="button"]{
+    width: 199px;
+}
+input[type="text"]{
+    width: 190px;
+}
